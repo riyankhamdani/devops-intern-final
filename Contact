@@ -7,4 +7,3 @@
 ```python
 #!/usr/bin/env python3
 print("Hello, DevOps!")
-scripts/sysinfo.sh
