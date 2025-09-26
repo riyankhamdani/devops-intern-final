@@ -1,0 +1,9 @@
+# MLFlow optional demo
+
+This folder can contain a minimal MLflow example: a small script that logs a dummy metric, plus a docker-compose to run mlflow + postgresql + artifact store.
+Example command to run a dummy run:
+
+python -c "import mlflow; mlflow.set_experiment('demo'); with mlflow.start_run(): mlflow.log_metric('mse', 0.123)"
+
+End of scaffold
+Place these files into your GitHub repo root (keep path structure). Update any image names or hostnames if you will push images to a registry. Good luck!
