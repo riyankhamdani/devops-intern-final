@@ -1,0 +1,51 @@
+# Loki setup notes (local Docker)
+
+
+1) Start Loki and Grafana locally (minimum) - example using Docker compose is recommended but here are simple commands:
+
+
+# start loki
+docker run -d --name loki -p 3100:3100 grafana/loki:2.8.2
+
+
+# start promtail (simple local tail forwarder) - replace <HOSTNAME> if needed
+docker run -d --name promtail -v /var/log:/var/log -v /etc/promtail:/etc/promtail grafana/promtail:2.8.2 -config.file=/etc/promtail/promtail.yaml
+
+
+# start grafana
+docker run -d --name grafana -p 3000:3000 grafana/grafana:latest
+
+
+2) Example Promtail config (minimal) - store at /etc/promtail/promtail.yaml on the host used by the promtail container:
+
+
+server:
+http_listen_port: 9080
+
+
+positions:
+filename: /tmp/positions.yaml
+
+
+clients:
+- url: http://loki:3100/loki/api/v1/push
+
+
+scrape_configs:
+- job_name: system
+static_configs:
+- targets:
+- localhost
+labels:
+job: varlogs
+__path__: /var/log/*log
+
+
+3) To verify logs ingested to Loki (simple method):
+- Open Grafana (http://localhost:3000) and add Loki as a data source (URL: http://host.docker.internal:3100 or http://localhost:3100)
+- Use Explore -> Logs and run a query like `{job="varlogs"}`
+
+
+4) Quick container log check (without Grafana):
+- `docker logs promtail` (to see promtail status)
+- `docker logs loki` (to see loki server logs)
